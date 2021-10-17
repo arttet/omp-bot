@@ -3,9 +3,11 @@ package router
 import (
 	"log"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/ozonmp/omp-bot/internal/app/commands/demo"
+	"github.com/ozonmp/omp-bot/internal/app/commands/domain"
 	"github.com/ozonmp/omp-bot/internal/app/path"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Commander interface {
@@ -44,6 +46,8 @@ type Router struct {
 	// logistic
 	// product
 	// education
+
+	domainCommander domain.DomainCommander
 }
 
 func NewRouter(
@@ -79,6 +83,8 @@ func NewRouter(
 		// logistic
 		// product
 		// education
+
+		domainCommander: domain.NewDomainCommander(bot),
 	}
 }
 
@@ -157,6 +163,8 @@ func (c *Router) handleCallback(callback *tgbotapi.CallbackQuery) {
 		break
 	case "education":
 		break
+	case "domain":
+		c.domainCommander.HandleCallback(callback, callbackPath)
 	default:
 		log.Printf("Router.handleCallback: unknown domain - %s", callbackPath.Domain)
 	}
@@ -228,6 +236,8 @@ func (c *Router) handleMessage(msg *tgbotapi.Message) {
 		break
 	case "education":
 		break
+	case "domain":
+		c.domainCommander.HandleCommand(msg, commandPath)
 	default:
 		log.Printf("Router.handleCallback: unknown domain - %s", commandPath.Domain)
 	}
