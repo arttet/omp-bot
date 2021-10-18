@@ -18,7 +18,7 @@ func (c *DemoSubdomainCommander) Get(inputMessage *tgbotapi.Message) {
 
 	product, err := c.subdomainService.Get(idx)
 	if err != nil {
-		log.Printf("fail to get product with idx %d: %v", idx, err)
+		log.Printf("failed to get the product with idx %d: %v", idx, err)
 		return
 	}
 
