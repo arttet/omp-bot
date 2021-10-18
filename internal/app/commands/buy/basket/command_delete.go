@@ -1,4 +1,4 @@
-package subdomain
+package basket
 
 import (
 	"fmt"
@@ -8,10 +8,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func (c *commander) Delete(
-	inputMessage *tgbotapi.Message,
-) tgbotapi.MessageConfig {
-
+func (c *commander) Delete(inputMessage *tgbotapi.Message) tgbotapi.MessageConfig {
 	args := inputMessage.CommandArguments()
 
 	idx, err := strconv.ParseInt(args, 10, 0)

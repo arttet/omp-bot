@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/ozonmp/omp-bot/internal/app/path"
-	service "github.com/ozonmp/omp-bot/internal/service/domain/subdomain"
+	service "github.com/ozonmp/omp-bot/internal/service/buy/subdomain"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -24,12 +24,12 @@ type SubdomainCommander interface {
 
 type commander struct {
 	bot     *tgbotapi.BotAPI
-	service service.SubdomainService
+	service service.BasketService
 }
 
 func NewSubdomainCommander(
 	bot *tgbotapi.BotAPI,
-	service service.SubdomainService,
+	service service.BasketService,
 ) SubdomainCommander {
 
 	return &commander{

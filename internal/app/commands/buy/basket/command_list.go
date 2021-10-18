@@ -1,4 +1,4 @@
-package subdomain
+package basket
 
 import (
 	"encoding/json"
@@ -9,10 +9,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func (c *commander) List(
-	inputMessage *tgbotapi.Message,
-) tgbotapi.MessageConfig {
-
+func (c *commander) List(inputMessage *tgbotapi.Message) tgbotapi.MessageConfig {
 	outputMsgText := "Here all the products: \n\n"
 
 	var (
@@ -27,19 +24,18 @@ func (c *commander) List(
 		return tgbotapi.NewMessage(inputMessage.Chat.ID, err.Error())
 	}
 
-	// for _, p := range products {
-	// 	outputMsgText += p.Title
-	// 	outputMsgText += "\n"
-	// }
-
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsgText)
 
-	serializedData, _ := json.Marshal(CallbackListData{
+	serializedData, err := json.Marshal(CallbackListData{
 		Offset: 21,
 	})
+	if err != nil {
+		log.Printf("failed to list the products: %v", err)
+		return tgbotapi.NewMessage(inputMessage.Chat.ID, err.Error())
+	}
 
 	callbackPath := path.CallbackPath{
-		Domain:       "demo",
+		Domain:       "buy",
 		Subdomain:    "subdomain",
 		CallbackName: "list",
 		CallbackData: string(serializedData),

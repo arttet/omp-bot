@@ -1,35 +1,31 @@
-package domain
+package buy
 
 import (
 	"log"
 
-	"github.com/ozonmp/omp-bot/internal/app/commands/domain/subdomain"
-	command "github.com/ozonmp/omp-bot/internal/app/commands/domain/subdomain"
+	"github.com/ozonmp/omp-bot/internal/app/commands/buy/basket"
 	"github.com/ozonmp/omp-bot/internal/app/path"
-	service "github.com/ozonmp/omp-bot/internal/service/domain/subdomain"
+	basketservice "github.com/ozonmp/omp-bot/internal/service/buy/basket"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-type DomainCommander interface {
+type BuyCommander interface {
 	HandleCallback(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath)
 	HandleCommand(message *tgbotapi.Message, commandPath path.CommandPath)
 }
 
 type commander struct {
-	bot                *tgbotapi.BotAPI
-	subdomainCommander command.SubdomainCommander
+	bot             *tgbotapi.BotAPI
+	basketCommander basket.BasketCommander
 }
 
-func NewDomainCommander(
-	bot *tgbotapi.BotAPI,
-) DomainCommander {
-
-	subdomainService := service.NewService()
+func NewBuyCommander(bot *tgbotapi.BotAPI) BuyCommander {
+	basketService := basketservice.NewService()
 
 	return &commander{
-		bot:                bot,
-		subdomainCommander: subdomain.NewSubdomainCommander(bot, subdomainService),
+		bot:             bot,
+		basketCommander: basket.NewBasketCommander(bot, basketService),
 	}
 }
 
@@ -40,7 +36,7 @@ func (c *commander) HandleCallback(
 
 	switch callbackPath.Subdomain {
 	case "subdomain":
-		c.subdomainCommander.HandleCallback(callback, callbackPath)
+		c.basketCommander.HandleCallback(callback, callbackPath)
 	default:
 		log.Printf("DemoCommander.HandleCallback: unknown subdomain - %s", callbackPath.Subdomain)
 	}
@@ -53,7 +49,7 @@ func (c *commander) HandleCommand(
 
 	switch commandPath.Subdomain {
 	case "subdomain":
-		c.subdomainCommander.HandleCommand(msg, commandPath)
+		c.basketCommander.HandleCommand(msg, commandPath)
 	default:
 		log.Printf("DemoCommander.HandleCommand: unknown subdomain - %s", commandPath.Subdomain)
 	}

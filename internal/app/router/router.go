@@ -3,8 +3,8 @@ package router
 import (
 	"log"
 
+	"github.com/ozonmp/omp-bot/internal/app/commands/buy"
 	"github.com/ozonmp/omp-bot/internal/app/commands/demo"
-	"github.com/ozonmp/omp-bot/internal/app/commands/domain"
 	"github.com/ozonmp/omp-bot/internal/app/path"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -24,6 +24,7 @@ type Router struct {
 	// user
 	// access
 	// buy
+	buyCommander buy.BuyCommander
 	// delivery
 	// recommendation
 	// travel
@@ -46,8 +47,6 @@ type Router struct {
 	// logistic
 	// product
 	// education
-
-	domainCommander domain.DomainCommander
 }
 
 func NewRouter(
@@ -61,6 +60,7 @@ func NewRouter(
 		// user
 		// access
 		// buy
+		buyCommander: buy.NewBuyCommander(bot),
 		// delivery
 		// recommendation
 		// travel
@@ -83,8 +83,6 @@ func NewRouter(
 		// logistic
 		// product
 		// education
-
-		domainCommander: domain.NewDomainCommander(bot),
 	}
 }
 
@@ -118,7 +116,7 @@ func (c *Router) handleCallback(callback *tgbotapi.CallbackQuery) {
 	case "access":
 		break
 	case "buy":
-		break
+		c.buyCommander.HandleCallback(callback, callbackPath)
 	case "delivery":
 		break
 	case "recommendation":
@@ -163,8 +161,6 @@ func (c *Router) handleCallback(callback *tgbotapi.CallbackQuery) {
 		break
 	case "education":
 		break
-	case "domain":
-		c.domainCommander.HandleCallback(callback, callbackPath)
 	default:
 		log.Printf("Router.handleCallback: unknown domain - %s", callbackPath.Domain)
 	}
@@ -191,7 +187,7 @@ func (c *Router) handleMessage(msg *tgbotapi.Message) {
 	case "access":
 		break
 	case "buy":
-		break
+		c.buyCommander.HandleCommand(msg, commandPath)
 	case "delivery":
 		break
 	case "recommendation":
@@ -236,8 +232,6 @@ func (c *Router) handleMessage(msg *tgbotapi.Message) {
 		break
 	case "education":
 		break
-	case "domain":
-		c.domainCommander.HandleCommand(msg, commandPath)
 	default:
 		log.Printf("Router.handleCallback: unknown domain - %s", commandPath.Domain)
 	}
